@@ -76,7 +76,11 @@ void Scene::update(float deltaTime) {
     program->use();
 
     // rotate the camera relative to the object
-    // camera->eye = ;
+    camera->eye = mat3(cos(deltaTime), 0.0f, sin(deltaTime),
+                       0.0f, 1.0f, 0.0f,
+                       -sin(deltaTime), 0, cos(deltaTime)) * camera->eye + vec3(0, sin(time) / 10, 0);
+
+    time += deltaTime;
 
     // setup camera and light
     camera->setup();
