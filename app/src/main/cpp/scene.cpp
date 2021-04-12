@@ -11,6 +11,14 @@ Light* Scene::light = nullptr;
 Object* Scene::teapot = nullptr;
 Material* Scene::flower = nullptr;
 
+mat4 getRotXMtx(double angle) {
+    double degrees = radians(angle);
+    return mat4(1.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, cos(degrees), -sin(degrees), 0.0f,
+                0.0f, sin(degrees), cos(degrees), 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 void Scene::setup(AAssetManager* aAssetManager) {
 
     // set asset manager
@@ -40,13 +48,19 @@ void Scene::setup(AAssetManager* aAssetManager) {
 
     mat4 scaleM, eulerX, rotMat;
     scaleM = transpose(mat4(1.0f, 0.0f, 0.0f, 0.0f,  //In OpenGL, the matrix must be transposed
-                            0.0f, 1.0f, 0.0f, 0.0f,
+                            0.0f, 2.0f, 0.0f, 0.0f,
                             0.0f, 0.0f, 1.0f, 0.0f,
                             0.0f, 0.0f, 0.0f, 1.0f));
 
-    // eulerX = ;
-    // rotMat = ;
-    // teapot->worldMatrix = ;
+    eulerX = transpose(getRotXMtx(45.0f));
+
+    double sqrt2Reciprocal = 1 / sqrt(2.0f);
+    mat4 transformMatrix = mat4(sqrt2Reciprocal, 0.0f, -sqrt2Reciprocal, 0.0f,
+                                0.0f, 1.0f, 0.0f, 0.0f,
+                                sqrt2Reciprocal, 0.0f, sqrt2Reciprocal, 0.0f,
+                                0.0f, 0.0f, 0.0f, 1.0f);
+    rotMat = transpose(transpose(transformMatrix) * getRotXMtx(90.0f) * transformMatrix);
+    teapot->worldMatrix = rotMat * eulerX * scaleM;
 }
 
 void Scene::screen(int width, int height) {
